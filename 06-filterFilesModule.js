@@ -1,28 +1,29 @@
-var filterFiles = function(directory, fileExt, callback) {
+module.exports = function(directory, fileExt, callback) {
 
   var fs = require('fs');
+  var path = require('path');
 
-  var path = process.argv[2];
-  var filter = process.argv[3];
-  
-  console.log(path, filter);
-
-  fs.readdir(path, function(err, data){
-    if (err) throw err;
+  fs.readdir(directory, function(err, data){
+    if (err) {
+      return callback(err);
+    }
+    //call the filter files function
     var output = filterFiles(data);
-    console.log(output);
+    //call the callback function and pass in the data
+    return callback(null, output);
   });
 
   var filterFiles = function (fileArray) {
+
     var filtered = [];
     //loop through files in this directory
     for (var i = 0; i < fileArray.length; i++) {
       //the current filename
       var filename = fileArray[i];
       //get the file extension
-      var ext = filename.split('.')[1];
+      var ext = path.extname(filename);
       //check if the file extension
-      if (ext === filter) {
+      if (ext === '.' + fileExt) {
         filtered.push(filename);
       }
     }
@@ -30,5 +31,4 @@ var filterFiles = function(directory, fileExt, callback) {
     return filtered;
   };
 
-
-}
+};
